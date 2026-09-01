@@ -1,0 +1,17 @@
+起動方法（ターミナルで実行）
+
+cd project-finance-manager
+npm run dev
+ブラウザで http://localhost:3000 を開いて、まず「マスタ管理」→「年度設定」から登録してください。
+
+
+
+方法②：cmdで実行する
+
+PowerShellではなく**コマンドプロンプト（cmd）**を使えば即解決します。
+
+Kiroのターミナルで cmd と入力してEnter、その後：
+
+
+
+npm run dev
