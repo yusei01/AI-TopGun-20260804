@@ -1,0 +1,7 @@
+https://github.com/yusei01/AI-TopGun-20260804
+
+
+cd "C:\Users\mss\Desktop\AIトップガン　AWS\20260804"
+git add .
+git commit -m "ファイル追加"
+git push
