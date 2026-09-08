@@ -1,0 +1,150 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  previewFeatures = []
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+enum ProjectType {
+  LUMP_SUM // 一括請負
+  QUASI_MANDATE // 準委任契約
+  SES // SES
+}
+
+enum ProjectStatus {
+  IN_PROGRESS // 進行中
+  COMPLETED // 完了
+  CANCELLED // キャンセル
+}
+
+enum EmployeeType {
+  PROPER // プロパー
+  PARTNER // 協力会社
+}
+
+enum RevenueType {
+  LUMP_SUM // 一括請負
+  QUASI_MANDATE // 準委任契約
+  SES // SES
+}
+
+enum PaymentStatus {
+  UNINVOICED // 未請求
+  INVOICED // 請求済
+  PAID // 入金済
+}
+
+model Client {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Member {
+  id             Int             @id @default(autoincrement())
+  name           String
+  employeeType   EmployeeType
+  hourlyRate     Float?
+  projectMembers ProjectMember[]
+  revenues       Revenue[]
+  payments       Payment[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Partner {
+  id         Int       @id @default(autoincrement())
+  name       String
+  baseAmount Float
+  payments   Payment[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model FiscalSetting {
+  id           Int      @id @default(autoincrement())
+  fiscalYear   Int      @unique
+  indirectRate Float
+  salesRate    Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Project {
+  id             Int             @id @default(autoincrement())
+  projectCode    String          @unique
+  name           String
+  projectType    ProjectType
+  clientId       Int?
+  client         Client?         @relation(fields: [clientId], references: [id])
+  dueDate        DateTime?
+  status         ProjectStatus   @default(IN_PROGRESS)
+  projectMembers ProjectMember[]
+  revenues       Revenue[]
+  payments       Payment[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model ProjectMember {
+  id        Int     @id @default(autoincrement())
+  projectId Int
+  memberId  Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  member    Member  @relation(fields: [memberId], references: [id])
+
+  @@unique([projectId, memberId])
+}
+
+model Revenue {
+  id            Int            @id @default(autoincrement())
+  projectId     Int
+  revenueType   RevenueType
+  memberId      Int?
+  baseAmount    Float
+  workingHours  Float?
+  lowerHours    Float?
+  upperHours    Float?
+  calcBaseHours Float?
+  unitPrice     Float?
+  adjustment    Float?         @default(0)
+  totalRevenue  Float
+  invoiceDate   DateTime?
+  paymentStatus PaymentStatus?
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  member        Member?        @relation(fields: [memberId], references: [id])
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Payment {
+  id           Int          @id @default(autoincrement())
+  projectId    Int
+  memberId     Int?
+  partnerId    Int?
+  employeeType EmployeeType
+  category     String
+  workingHours Float
+  hourlyRate   Float?
+  baseAmount   Float?
+  baseCost     Float
+  indirectCost Float
+  salesCost    Float
+  adjustment   Float        @default(0)
+  totalPayment Float
+  fiscalYear   Int
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  member       Member?      @relation(fields: [memberId], references: [id])
+  partner      Partner?     @relation(fields: [partnerId], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}

@@ -87,7 +87,7 @@ export default function ReportsPage() {
       </div>
 
       {/* サマリーカード */}
-      {data && (
+      {data && data.summary && (
         <>
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-white rounded-lg border border-gray-200 p-4">

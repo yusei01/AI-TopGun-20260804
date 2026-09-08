@@ -29,7 +29,7 @@ export default function ProjectListPage() {
     if (filterType) params.set('projectType', filterType)
     fetch(`/api/projects?${params.toString()}`)
       .then((r) => r.json())
-      .then(setProjects)
+      .then((data) => setProjects(Array.isArray(data) ? data : []))
       .finally(() => setLoading(false))
   }, [filterStatus, filterType])
 
