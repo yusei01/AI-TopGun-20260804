@@ -49,11 +49,22 @@ model Client {
   updatedAt DateTime  @updatedAt
 }
 
+model Grade {
+  id        Int       @id @default(autoincrement())
+  grade     Int       // 等級（1〜9）
+  startYm   String    // 適用開始年月（YYYY-MM）
+  endYm     String?   // 終了年月（YYYY-MM、null=現在も有効）
+  unitPrice Float     // 単価（円）
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model Member {
   id             Int            @id @default(autoincrement())
   name           String
   employeeType   EmployeeType
   hourlyRate     Float?
+  grade          Int?           // 等級（1〜9）
   projectMembers ProjectMember[]
   revenues       Revenue[]
   payments       Payment[]
