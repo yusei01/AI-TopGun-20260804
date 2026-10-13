@@ -42,11 +42,13 @@ enum PaymentStatus {
 }
 
 model Client {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  projects  Project[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  department String?   // 部署名
+  deleted    Int       @default(0) // 論理削除フラグ 0=有効 1=無効
+  projects   Project[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 model Grade {
   id        Int       @id @default(autoincrement())
@@ -57,15 +59,7 @@ model Grade {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
-model Grade {
-  id        Int       @id @default(autoincrement())
-  grade     Int       // 等級（1〜9）
-  startYm   String    // 適用開始年月（YYYY-MM）
-  endYm     String?   // 終了年月（YYYY-MM、null=現在も有効）
-  unitPrice Float     // 単価（円）
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
+
 
 model Member {
   id             Int            @id @default(autoincrement())
