@@ -48,7 +48,15 @@ model Client {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
-
+model Grade {
+  id        Int       @id @default(autoincrement())
+  grade     Int       // 等級（1〜9）
+  startYm   String    // 適用開始年月（YYYY-MM）
+  endYm     String?   // 終了年月（YYYY-MM、null=現在も有効）
+  unitPrice Float     // 単価（円）
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
 model Grade {
   id        Int       @id @default(autoincrement())
   grade     Int       // 等級（1〜9）
@@ -74,8 +82,10 @@ model Member {
 
 model Partner {
   id          Int       @id @default(autoincrement())
+  partnerCode String    @unique // 取引先コード（半角数字9桁）
   name        String
-  baseAmount  Float
+  salesRep    String?   // 営業担当者（人名）
+  deleted     Int       @default(0) // 論理削除フラグ 0=有効 1=無効
   payments    Payment[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
