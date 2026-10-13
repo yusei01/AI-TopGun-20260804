@@ -3,7 +3,10 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
-    const clients = await prisma.client.findMany({ orderBy: { name: 'asc' } })
+    const clients = await prisma.client.findMany({
+      where: { deleted: 0 },
+      orderBy: { name: 'asc' },
+    })
     return NextResponse.json(clients)
   } catch {
     return NextResponse.json({ error: 'クライアントの取得に失敗しました' }, { status: 500 })
@@ -13,9 +16,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name } = body
+    const { name, department } = body
     if (!name) return NextResponse.json({ error: 'クライアント名は必須です' }, { status: 400 })
-    const client = await prisma.client.create({ data: { name } })
+    const client = await prisma.client.create({ data: { name, department: department ?? null } })
     return NextResponse.json(client, { status: 201 })
   } catch {
     return NextResponse.json({ error: 'クライアントの登録に失敗しました' }, { status: 500 })
