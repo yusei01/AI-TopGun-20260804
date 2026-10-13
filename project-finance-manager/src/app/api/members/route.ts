@@ -13,11 +13,16 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, employeeType, hourlyRate } = body
+    const { name, employeeType, hourlyRate, grade } = body
     if (!name) return NextResponse.json({ error: '担当者名は必須です' }, { status: 400 })
     if (!employeeType) return NextResponse.json({ error: '社員区分は必須です' }, { status: 400 })
     const member = await prisma.member.create({
-      data: { name, employeeType, hourlyRate: hourlyRate ? Number(hourlyRate) : null },
+      data: {
+        name,
+        employeeType,
+        hourlyRate: hourlyRate ? Number(hourlyRate) : null,
+        grade: grade ? Number(grade) : null,
+      },
     })
     return NextResponse.json(member, { status: 201 })
   } catch {

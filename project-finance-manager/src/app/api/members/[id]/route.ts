@@ -5,10 +5,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params
     const body = await req.json()
-    const { name, employeeType, hourlyRate } = body
+    const { name, employeeType, hourlyRate, grade } = body
     const member = await prisma.member.update({
       where: { id: Number(id) },
-      data: { name, employeeType, hourlyRate: hourlyRate ? Number(hourlyRate) : null },
+      data: {
+        name,
+        employeeType,
+        hourlyRate: hourlyRate ? Number(hourlyRate) : null,
+        grade: grade ? Number(grade) : null,
+      },
     })
     return NextResponse.json(member)
   } catch {
