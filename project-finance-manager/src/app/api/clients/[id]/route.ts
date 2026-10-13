@@ -5,10 +5,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params
     const body = await req.json()
-    const { name } = body
+    const { name, department } = body
     const client = await prisma.client.update({
       where: { id: Number(id) },
-      data: { name },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(department !== undefined && { department: department ?? null }),
+      },
     })
     return NextResponse.json(client)
   } catch {
@@ -19,7 +22,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    await prisma.client.delete({ where: { id: Number(id) } })
+    // 論理削除: deleted を 1(無効) に更新
+    await prisma.client.update({
+      where: { id: Number(id) },
+      data: { deleted: 1 },
+    })
     return NextResponse.json({ message: '削除しました' })
   } catch {
     return NextResponse.json({ error: 'クライアントの削除に失敗しました' }, { status: 500 })
