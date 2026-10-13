@@ -11,13 +11,28 @@ export async function GET(req: NextRequest) {
 
     const { startDate, endDate } = getPeriodRange(fiscalYear, periodType, month)
 
+    // 案件の期日（dueDate）で絞り込み
     const revenues = await prisma.revenue.findMany({
-      where: { createdAt: { gte: startDate, lte: endDate } },
+      where: { 
+        project: { 
+          dueDate: { 
+            gte: startDate, 
+            lte: endDate 
+          } 
+        } 
+      },
       include: { project: { include: { client: true } } },
     })
 
     const payments = await prisma.payment.findMany({
-      where: { createdAt: { gte: startDate, lte: endDate } },
+      where: { 
+        project: { 
+          dueDate: { 
+            gte: startDate, 
+            lte: endDate 
+          } 
+        } 
+      },
       include: { project: true },
     })
 
